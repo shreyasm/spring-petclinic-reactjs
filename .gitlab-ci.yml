@@ -11,7 +11,7 @@ build_artifacts:
     - mvn clean install -Dmaven.test.skip=true
   artifacts:
     paths:
-      - archivist/target/*.jar
+      - target/*.jar
 
 publish:
   image: 
@@ -24,7 +24,6 @@ publish:
     - aws --version
     - docker --version
   script:
-    - cd archivist
     - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID -f src/main/docker/Dockerfile .
     - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
     - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
