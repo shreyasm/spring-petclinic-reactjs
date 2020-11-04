@@ -14,6 +14,10 @@ const entries = [
 module.exports = {
   devtool: 'source-map',
   entry: entries,
+  devServer: {
+    compress: true,
+    disableHostCheck: true,   // That solved it
+  },
   output: {
     path: path.join(__dirname, 'public/dist/'),
     filename: 'bundle.js',
