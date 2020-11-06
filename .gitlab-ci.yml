@@ -15,8 +15,8 @@ build_artifacts:
 
 publish:
   image:
-  name: amazon/aws-cli
-  entrypoint: [""]
+    name: amazon/aws-cli
+    entrypoint: [""]
   services:
     - docker:dind
   before_script:
