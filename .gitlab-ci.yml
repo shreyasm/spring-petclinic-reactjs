@@ -4,10 +4,26 @@ variables:
   APP_NAME: team-gitlab-hackathon/backend
   DOCKER_HOST: tcp://docker:2375
 
-deploy:
-  stage: deploy
-  image: bearengineer/awscli-kubectl
+build_artifacts:
+  image: maven:3.6.0-jdk-8-slim
+  stage: build
   script:
-    - aws eks update-kubeconfig --region us-east-1 --name basic-cluster
-    - kubectl apply -f deployment.yml -n=gitlab-ci
-    - kubectl apply -f service.yml -n=gitlab-ci
+    - mvn clean install -DskipTests
+  artifacts:
+  paths:
+    - target/*.jar
+
+publish:
+  image:
+  name: amazon/aws-cli
+  entrypoint: [""]
+  services:
+    - docker:dind
+  before_script:
+    - amazon-linux-extras install docker
+    - aws --version
+    - docker --version
+  script: 
+    - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID -f src/main/docker/Dockerfile .
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+    - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
