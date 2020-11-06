@@ -6,7 +6,7 @@ variables:
 
 deploy:
   stage: deploy
-  image: dtzar/helm-kubectl
+  image: bearengineer/awscli-kubectl
   script:
     - aws eks update-kubeconfig --region us-east-1 --name basic-cluster
     - kubectl apply -f deployment.yaml
