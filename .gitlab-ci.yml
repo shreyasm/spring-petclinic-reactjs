@@ -10,8 +10,8 @@ build_artifacts:
   script:
     - mvn clean install -DskipTests
   artifacts:
-  paths:
-    - target/*.jar
+    paths:
+      - target/*.jar
 
 publish:
   image:
