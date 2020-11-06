@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab-backend
+spec:
+  selector:
+    matchLabels:
+      app: gitlab-backend
+      tier: backend
+      track: stable
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: gitlab-backend
+        tier: backend
+        track: stable
+    spec:
+      containers:
+        - name: gitlab-backend
+          image: "038062473746.dkr.ecr.us-east-1.amazonaws.com/team-gitlab-hackathon/backend:8"
+          ports:
+            - name: http
+              containerPort: 8080
+
