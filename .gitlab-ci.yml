@@ -4,34 +4,35 @@ variables:
   APP_NAME: team-gitlab-hackathon/backend
   DOCKER_HOST: tcp://docker:2375
 
-build_artifacts:
-  image: maven:3.6.0-jdk-8-slim
-  stage: build
-  script:
-    - mvn clean install
-  artifacts:
-    paths:
-      - target/*.jar
+// build_artifacts:
+//   image: maven:3.6.0-jdk-8-slim
+//   stage: build
+//   script:
+//     - mvn clean install -DskipTests
+//   artifacts:
+//     paths:
+//       - target/*.jar
 
-publish:
-  image: 
-    name: amazon/aws-cli
-    entrypoint: [""]
-  services:
-    - docker:dind
-  before_script:
-    - amazon-linux-extras install docker
-    - aws --version
-    - docker --version
-  script:
-    - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID -f src/main/docker/Dockerfile .
-    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
-    - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
-  allow_failure: true
+// publish:
+//   image: 
+//     name: amazon/aws-cli
+//     entrypoint: [""]
+//   services:
+//     - docker:dind
+//   before_script:
+//     - amazon-linux-extras install docker
+//     - aws --version
+//     - docker --version
+//   script:
+//     - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID -f src/main/docker/Dockerfile .
+//     - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+//     - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
+//   allow_failure: true
 
 deploy:
   stage: deploy
   image: dtzar/helm-kubectl
   script:
+    - aws eks update-kubeconfig --region us-east-1 --name basic-cluster
     - kubectl apply -f deployment.yaml
     - kubectl apply -f service.yml
